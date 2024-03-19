@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import path from 'path';
 import multer from 'multer';
 import cors from 'cors';
@@ -7,8 +7,6 @@ import FormData from 'form-data';
 import fs from 'fs';
 import dotenv from 'dotenv';
 dotenv.config();
-
-
 
 
 const app = express();
@@ -31,25 +29,9 @@ const storage = multer.diskStorage({
   
   const upload = multer({ storage: storage })
 
-app.get("/",(req,res) =>{
-    res.send("Upload successful"); 
-})
-
-app.post('/api/upload', upload.single('uploadImage'), async (req,res) =>{
+  //Upload the image
+  async function uploadToImgBB(filePath,apiKey){
     try {
-        const apiKey = process.env.IMGBB_API_URL;
-        const imageURL = await uploadToImgBB(req.file.path,apiKey);
-
-        console.log(imageURL);
-    
-        res.status(200).json({imageURL});
-    } catch (error) {
-        console.log("Error at upload api: ",error);
-        res.status(500).json({ error: 'Failed to upload image' });
-    }
-})
-
-async function uploadToImgBB(filePath,apiKey){
     const formData = new FormData;
     formData.append('key',apiKey)
     formData.append('image',fs.createReadStream(filePath))
@@ -65,7 +47,92 @@ async function uploadToImgBB(filePath,apiKey){
     }else {
         throw new Error('Failed to upload image to ImgBB');
     }
+    } catch (error) {
+        console.log(error);
+    }
 
 }
+// imageURL to context generator
+async function contextGenerator(imageURL){
+    try {
+ 
+        fetch('https://marmot-first-centrally.ngrok-free.app/generate',{
+            method: 'POST',
+            headers : {
+                'Content-type' : 'application/json'
+            },
+            body: JSON.stringify({
+                "image_urls" : [imageURL]
+            })
+        }) 
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const contextOfImage = data.generated_texts;
+            console.log("Generated Texts:", contextOfImage);   
+
+            return contextOfImage       
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// context and to and fro converasation
+async function conversation(contextOfImage){
+   try {
+    query({"inputs": {
+        "question": "Elaborate and give me more context on this",
+        "context": `${contextOfImage}`
+    }}).then((response) => {
+    console.log("Answer to ur question : ",JSON.stringify(response));
+    });
+   } catch (error) {
+    console.error("Error generating text:", error);
+    // Retry after 1 second
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await conversation(contextOfImage); // Retry the request
+   }
+}
+// Converational BERT API function 
+async function query(data) {
+	const response = await fetch(
+		"https://api-inference.huggingface.co/models/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad",
+		{
+			headers: { Authorization: "Bearer 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" },
+			method: "POST",
+			body: JSON.stringify(data),
+		}
+	);
+	const result = await response.json();
+	return result;
+}
+
+
+
+app.get("/",(req,res) =>{
+    res.send("Upload successful"); 
+})
+
+app.post('/api/upload', upload.single('uploadImage'), async (req,res) =>{
+    try {
+        const apiKey = process.env.IMGBB_API_URL;
+
+        // Image to url generate
+        const imageURL = await uploadToImgBB(req.file.path,apiKey);
+        console.log("Image URL - ",imageURL);
+
+        const contextOfImage = contextGenerator(imageURL)
+
+        return res.json({contextOfImage: contextOfImage, message:"Hi! Welcome to PixelSpeak if you have any questions regarding the picture lets discuss! Below is the context of the image ou provided"})
+        // conversation(contextOfImage)
+        // res.status(200).json({imageURL});
+    } catch (error) {
+        console.log("Error at upload api: ",error);
+        res.status(500).json({ error: 'Failed to upload image' });
+    }
+})
+
+
 
 app.listen(PORT, () => console.log(`Server listening on PORT ${PORT}`))
