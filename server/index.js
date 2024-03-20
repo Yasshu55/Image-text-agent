@@ -55,24 +55,24 @@ const storage = multer.diskStorage({
 // imageURL to context generator
 async function contextGenerator(imageURL){
     try {
- 
-        fetch('https://marmot-first-centrally.ngrok-free.app/generate',{
+        const response = await fetch('https://marmot-first-centrally.ngrok-free.app/generate', {
             method: 'POST',
-            headers : {
-                'Content-type' : 'application/json'
+            headers: {
+              'Content-type': 'application/json'
             },
             body: JSON.stringify({
-                "image_urls" : [imageURL]
+              "image_urls": [imageURL]
             })
-        }) 
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            const contextOfImage = data.generated_texts;
-            console.log("Generated Texts:", contextOfImage);   
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Generated Texts:", data.generated_texts); 
 
-            return contextOfImage       
-        })
+            return data.generated_texts;
+          } else {
+            throw new Error('Failed to generate context from image');
+          }
     } catch (error) {
         console.log(error);
     }
@@ -111,7 +111,7 @@ async function query(data) {
 
 
 app.get("/",(req,res) =>{
-    res.send("Upload successful"); 
+    res.send("Welcomee to Pixel speak"); 
 })
 
 app.post('/api/upload', upload.single('uploadImage'), async (req,res) =>{
@@ -122,14 +122,30 @@ app.post('/api/upload', upload.single('uploadImage'), async (req,res) =>{
         const imageURL = await uploadToImgBB(req.file.path,apiKey);
         console.log("Image URL - ",imageURL);
 
-        const contextOfImage = contextGenerator(imageURL)
+        const contextOfImage = await contextGenerator(imageURL)
 
         return res.json({contextOfImage: contextOfImage, message:"Hi! Welcome to PixelSpeak if you have any questions regarding the picture lets discuss! Below is the context of the image ou provided"})
-        // conversation(contextOfImage)
-        // res.status(200).json({imageURL});
+
     } catch (error) {
         console.log("Error at upload api: ",error);
         res.status(500).json({ error: 'Failed to upload image' });
+    }
+})
+
+app.post("/api/conversation", async (req,res) =>{
+    try {
+        const {question,contextOfImage} = req.body;
+        console.log("This is ques : ",question," and this is the context : ",contextOfImage);
+        const answer = await query({"inputs": {
+            "question": question,
+            "context": contextOfImage
+        }})
+        console.log("This is answer : ", answer);
+        return res.json({answer})
+
+    } catch (error) {
+        console.log("Error at convo api : ", error );
+        res.status(500).json({error : "Failed to upload image"})
     }
 })
 

@@ -5,9 +5,9 @@ import Conversation from '@/components/Conversation';
 
 export default function Upload() {
   const [file, setFile] = useState(null);
-  const[uploaded,isUploaded] = useState(true)
-  const[message,isMessage] =  useState("");
-  const[contextOfImage,isContextOfImage] = useState("");
+  const[uploaded,setUploaded] = useState(false)
+  const[message,setMessage] =  useState("");
+  const[contextOfImage,setContextOfImage] = useState("");
 
     const uploadImage = (e) =>{
        const uploadedFile = e.target.files[0];
@@ -30,9 +30,13 @@ export default function Upload() {
            if(response.ok){
                console.log("Successfully uploaded");
                const data = await response.json();
-               isUploaded(true);
-               isMessage(data.message)
-               isContextOfImage(data.contextOfImage)
+               if (data && data.message && data.contextOfImage) {
+                setMessage(data.message);
+                setContextOfImage(data.contextOfImage);
+                setUploaded(true);
+              } else {
+                console.error("Unexpected response format:", data);
+              }
             } else {
                 console.log("Unsucessfull");
             }
@@ -46,15 +50,13 @@ export default function Upload() {
    
      return (
        <div>
-           <form action="/upload" method="post" encType="multipart/form-data">
+            <form encType="multipart/form-data">
                <input type="file" name="uploadImage" onChange={uploadImage}/>
-           <button type='submit' onClick={submitHandler}>Submit</button>
-
+               <button type='submit' onClick={submitHandler}>Submit</button>
+            </form>
             {uploaded && (
                 <Conversation message={message} contextOfImage ={contextOfImage}/>
             )}
-
-         </form>
        </div>
      )
 }
