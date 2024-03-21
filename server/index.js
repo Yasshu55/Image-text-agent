@@ -99,11 +99,12 @@ async function query(data) {
 	const response = await fetch(
 		"https://api-inference.huggingface.co/models/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad",
 		{
-			headers: { Authorization: "Bearer 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" },
+			headers: { Authorization: `Bearer ${process.env.BERT_API_KEY}` },
 			method: "POST",
 			body: JSON.stringify(data),
 		}
 	);
+    console.log("Successfully answered the ques");
 	const result = await response.json();
 	return result;
 }
@@ -124,7 +125,7 @@ app.post('/api/upload', upload.single('uploadImage'), async (req,res) =>{
 
         const contextOfImage = await contextGenerator(imageURL)
 
-        return res.json({contextOfImage: contextOfImage, message:"Hi! Welcome to PixelSpeak if you have any questions regarding the picture lets discuss! Below is the context of the image ou provided"})
+        return res.json({imageURL: imageURL,contextOfImage: contextOfImage, message:"Hi! Welcome to PixelSpeak if you have any questions regarding the picture lets discuss! Below is the context of the image ou provided"})
 
     } catch (error) {
         console.log("Error at upload api: ",error);

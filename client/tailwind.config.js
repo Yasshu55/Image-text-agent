@@ -14,5 +14,9 @@ module.exports = {
       },
     },
   },
+  webpack: (config) => {
+    config.resolve.alias['@'] = path.resolve(__dirname, './client'); // Corrected alias path
+    return config;
+  },
   plugins: [],
 };
