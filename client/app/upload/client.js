@@ -56,14 +56,25 @@ export default function Upload() {
     <div className="app-container">
       <div className="upload-container">
         <div className="upload-box">
+          <h2 className="upload-title">Upload Image</h2>
           <form className="upload-form" encType="multipart/form-data">
-            <input
-              type="file"
-              name="uploadImage"
-              onChange={uploadImage}
-              className="upload-input"
-            />
-            <button type="submit" onClick={submitHandler} className="upload-button">
+            <label htmlFor="file-input" className="file-input-label">
+              <span className="file-input-text">Choose an image</span>
+              <input
+                id="file-input"
+                type="file"
+                name="uploadImage"
+                onChange={uploadImage}
+                className="upload-input"
+              />
+            </label>
+            {file && <p className='text-black mb-5'>{file.name}</p>}
+            <button
+              type="submit"
+              onClick={submitHandler}
+              className="upload-button"
+              disabled={!file}
+            >
               Submit
             </button>
           </form>
@@ -72,7 +83,6 @@ export default function Upload() {
           )}
         </div>
       </div>
-
       {uploaded && (
         <div className="chat-container">
           <Conversation message={message} contextOfImage={contextOfImage} />

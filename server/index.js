@@ -78,22 +78,6 @@ async function contextGenerator(imageURL){
     }
 }
 
-// context and to and fro converasation
-async function conversation(contextOfImage){
-   try {
-    query({"inputs": {
-        "question": "Elaborate and give me more context on this",
-        "context": `${contextOfImage}`
-    }}).then((response) => {
-    console.log("Answer to ur question : ",JSON.stringify(response));
-    });
-   } catch (error) {
-    console.error("Error generating text:", error);
-    // Retry after 1 second
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await conversation(contextOfImage); // Retry the request
-   }
-}
 // Converational BERT API function 
 async function query(data) {
 	const response = await fetch(

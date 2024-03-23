@@ -3,13 +3,11 @@ import React, { useEffect, useState } from 'react';
 
 function Conversation(props) {
   const contextString = props.contextOfImage.join(' ');
-  const [userAllMessages, setUserAllMessages] = useState([{ type: 'user', message: '' }]);
-  const [agentAllMessages, setAgentAllMessages] = useState([{ type: 'agent', message: '' }]);
+  const [conversation, setConversation] = useState([]);
   const [question, setQuestion] = useState("");
 
   useEffect(() => {
-    setUserAllMessages([]);
-    setAgentAllMessages([]);
+    setConversation([]);
     setQuestion("");
   }, [props.contextOfImage]);
 
@@ -28,8 +26,8 @@ function Conversation(props) {
       });
 
       const data = await response.json();
-      setUserAllMessages(prevState => [...prevState, { type: 'user', message: question }]);
-      setAgentAllMessages(prevState => [...prevState, { type: 'agent', message: data.answer.answer }]);
+      setConversation(prevConversation => [...prevConversation, { question, answer: data.answer.answer }]);
+      setQuestion("");
     } catch (error) {
       console.log(error);
     }
@@ -40,31 +38,43 @@ function Conversation(props) {
   };
 
   return (
-    <div>
-      <p>{typeof props.message === 'object' ? JSON.stringify(props.message) : props.message}</p>
-      <p>{typeof props.contextOfImage === 'object' ? JSON.stringify(props.contextOfImage) : contextString}</p>
-
-      <div className="messages">
-        {userAllMessages
-          .filter((message) => message.message !== '')
-          .map((message, index) => (
-            <div key={index} className={`message ${message.type}`}>
-              {message.message}
-            </div>
-          ))}
-
-        {agentAllMessages
-          .filter((message) => message.message !== '')
-          .map((message, index) => (
-            <div key={index} className={`message ${message.type}`}>
-              {message.message}
-            </div>
-          ))}
+    <div className="chat-container">
+      <div className="chat-header">
+        <h2 className="chat-title">Conversation</h2>
       </div>
-
+      <div className="messages-container">
+        <div className="messages">
+        <div className="message agent-message">
+        <p>{typeof props.message === 'object' ? JSON.stringify(props.message) : props.message}</p>
+        </div>
+        <div className="message agent-message">
+        <p>{typeof props.contextOfImage === 'object' ? JSON.stringify(contextString) : contextString}</p>
+        </div>
+          {conversation.map((messageObj, index) => (
+            <div key={index} className="message-group">
+              <div className="message user-message">
+                {/* <span className="user-avatar">You - </span> */}
+                <p className="message-text">{messageObj.question}</p>
+              </div>
+              <div className="message agent-message">
+                {/* <span className="agent-avatar"></span> */}
+                <p className="message-text">{messageObj.answer}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       <form onSubmit={submitHandler} className="chat-input">
-        <input type="text" value={question} onChange={handleInputChange} placeholder="Type your message..." />
-        <button type="submit">Send</button>
+        <input
+          type="text"
+          value={question}
+          onChange={handleInputChange}
+          placeholder="Type your message..."
+          className="chat-input-field"
+        />
+        <button type="submit" className="chat-send-button">
+         Send
+        </button>
       </form>
     </div>
   );
