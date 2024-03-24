@@ -1,17 +1,37 @@
-const pool = require('../config/dbConfig')
+import {DataTypes} from 'sequelize';
+import sequelize from '../config/sequelize.js';
+import dotenv from 'dotenv';
 
-class User {
-    static async createUser(email,username){
-        const query = 'INSERT INTO users (username,email) VALUES ($1, $2) RETURNING *'
-        const values = [username,email]
-        try {
-            const {rows} =  await pool.query(query,values);
-            return rows[0];
-        } catch (error) {
-            console.error('Error creating user:', error);
-            throw error;
+dotenv.config();
+
+export const User = sequelize.define('User',{
+    id : {
+    type : DataTypes.INTEGER,
+    primaryKey : true,
+    autoIncrement : true
+    },
+
+    userName : {
+        type : DataTypes.STRING,
+        allowNull : false,
+        unique: true
+    },
+    email : {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate : {
+            isEmail: true
         }
-    }
-}
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.NOW
+    },
+})
 
-module.exports = User;
+ 

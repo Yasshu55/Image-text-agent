@@ -5,7 +5,10 @@ import cors from 'cors';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import fs from 'fs';
+import sequelize from './config/sequelize.js'
+import { User } from './models/User.js';
 import dotenv from 'dotenv';
+import userRoutes from './routes/userRoutes.js'
 dotenv.config();
 
 
@@ -17,6 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cors());
 
+sequelize.sync()
+  .then(() => console.log('Database models synchronized'))
+  .catch(err => console.error('Error synchronizing database models:', err));
+
+
+  // User routes 
+app.use('/api', userRoutes);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -28,6 +38,7 @@ const storage = multer.diskStorage({
   })
   
   const upload = multer({ storage: storage })
+
 
   //Upload the image
   async function uploadToImgBB(filePath,apiKey){
@@ -133,6 +144,7 @@ app.post("/api/conversation", async (req,res) =>{
         res.status(500).json({error : "Failed to upload image"})
     }
 })
+
 
 
 
