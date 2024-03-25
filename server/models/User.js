@@ -1,10 +1,11 @@
 import {DataTypes} from 'sequelize';
 import sequelize from '../config/sequelize.js';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
-export const User = sequelize.define('User',{
+export const User = sequelize.define('user',{
     id : {
     type : DataTypes.INTEGER,
     primaryKey : true,
@@ -34,4 +35,13 @@ export const User = sequelize.define('User',{
     },
 })
 
- 
+
+User.prototype.comparePassword = async function(enteredPassword){
+    try {
+        const isMatch = await bcrypt.compare(enteredPassword,this.password)
+        return isMatch;        
+    } catch (error) {
+    console.error('Error comparing passwords:', error);
+    throw new Error('Error comparing passwords');
+    }
+}
