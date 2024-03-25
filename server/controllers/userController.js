@@ -8,7 +8,7 @@ export const createUser = async (req, res) => {
     try {
         const {userName,email,password,confirmPassword} = req.body;
 
-        console.log("Entered  : ",  userName + "  , " + email , "    Password:  "+ password);
+        console.log("Entered  : ",  userName + "  , " + email , "    Password:  "+ password + "confirm pass : " + confirmPassword);
         const user = await User.findOne({where : {email : email}})
         if(user){
             return res.status(409).json('User already exists');

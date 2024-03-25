@@ -33,6 +33,26 @@ function Conversation(props) {
     }
   }
 
+  const saveHandler = async () =>{
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:8000/api/save/${userId}`,{
+        method : "POST",
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: {
+          conversation : conversation,
+          contextOfImage:  contextOfImage,
+        },
+      })
+
+      console.log("Successfully  saved the chat!");
+    } catch (error) {
+      console.log("Errro at saveHandler : ", error);
+    }
+  }
+
   const handleInputChange = (e) => {
     setQuestion(e.target.value);
   };

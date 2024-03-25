@@ -79,7 +79,10 @@ export default function Upload() {
             </button>
           </form>
           {uploaded && (
+            <>
             <img src={imageURL} alt="Uploaded" className="uploaded-image" />
+            <button>Save Chat</button>
+            </>
           )}
         </div>
       </div>
