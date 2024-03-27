@@ -1,16 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Conversation from '@/components/Conversation';
 import '@/styles/globals.css';
+import { useRef } from 'react';
 
 export default function Upload() {
+  const saveHandlerRef = useRef(null);
   const [file, setFile] = useState(null);
   const [uploaded, setUploaded] = useState(false);
   const [message, setMessage] = useState("");
   const [contextOfImage, setContextOfImage] = useState("");
   const [imageURL, setImageURL] = useState("");
 
+  useEffect(() => {
+    console.log(file);
+  }, [file]);
+  
   const uploadImage = (e) => {
     const uploadedFile = e.target.files[0];
     console.log(uploadedFile);
@@ -81,14 +87,19 @@ export default function Upload() {
           {uploaded && (
             <>
             <img src={imageURL} alt="Uploaded" className="uploaded-image" />
-            <button>Save Chat</button>
+            <button onClick={() => saveHandlerRef.current.saveHandler()}>Save Chat</button>
             </>
           )}
         </div>
       </div>
       {uploaded && (
         <div className="chat-container">
-          <Conversation message={message} contextOfImage={contextOfImage} />
+        <Conversation
+          message={message}
+          contextOfImage={contextOfImage}
+          file={file}
+          ref={saveHandlerRef}
+        />
         </div>
       )}
     </div>

@@ -1,15 +1,20 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useImperativeHandle, forwardRef  } from 'react';
 
-function Conversation(props) {
+const Conversation = forwardRef((props, ref) => {
   const contextString = props.contextOfImage.join(' ');
   const [conversation, setConversation] = useState([]);
   const [question, setQuestion] = useState("");
-
+  const[file,setFile] = useState("");
+  
   useEffect(() => {
     setConversation([]);
     setQuestion("");
   }, [props.contextOfImage]);
+
+  useEffect(() => {
+    setFile(props.file);
+  }, [props.file]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -34,24 +39,39 @@ function Conversation(props) {
   }
 
   const saveHandler = async () =>{
-    e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:8000/api/save/${userId}`,{
+      // const formData = new FormData();
+      // formData.append('conversation', JSON.stringify(conversation));
+      // formData.append('contextOfImage', contextString);
+
+      console.log('conversation',JSON.stringify(conversation));
+      console.log('contextOfImage',contextString);
+
+      const res = await fetch(`http://localhost:8000/api/save`,{
         method : "POST",
         headers: {
-          'Content-type': 'application/json'
+          'Authorization': `Bearer  ${localStorage.getItem('auth-token')}`,
+          'Content-Type': 'application/json'
         },
-        body: {
-          conversation : conversation,
-          contextOfImage:  contextOfImage,
-        },
+        body : JSON.stringify({
+          conversation: conversation,
+          contextOfImage: contextString
+        })
       })
+
+      if(!res.ok){
+        throw Error (await res.text());
+      }
 
       console.log("Successfully  saved the chat!");
     } catch (error) {
       console.log("Errro at saveHandler : ", error);
     }
   }
+
+  useImperativeHandle(ref, () => ({
+    saveHandler: saveHandler
+  }));
 
   const handleInputChange = (e) => {
     setQuestion(e.target.value);
@@ -98,6 +118,6 @@ function Conversation(props) {
       </form>
     </div>
   );
-}
+})
 
 export default Conversation;

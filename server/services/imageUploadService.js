@@ -7,6 +7,8 @@ async function uploadToImgBB(filePath, apiKey) {
         const formData = new FormData();
         formData.append('key', apiKey);
         formData.append('image', fs.createReadStream(filePath));
+        console.log("Entered");
+        console.log("File path : ", fs.createReadStream(filePath));
 
         const response = await fetch('https://api.imgbb.com/1/upload', {
             method: 'POST',

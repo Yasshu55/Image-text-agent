@@ -23,7 +23,6 @@ export const createUser = async (req, res) => {
         // generate and send token
         const token = generateToken(newUser);
 
-        // Send success response with token
         return res.status(201).json({ message: "User registered successfully", token });
     } catch (error) {
         console.log('Error in Saving the user: ', error);
@@ -50,7 +49,7 @@ export const loginUser = async (req,res) =>{
             return  res.status(400).json({message: "Invalid credentials"})
         }
         const token = await generateToken(user)
-        res.header('auth-token', token).send(user)
+        return res.status(200).json({token:token})
     } catch (error) {
         console.log('Error in Saving the user: ', error);
         res.status(500).json({ error: error.message });
@@ -80,4 +79,23 @@ export const updateUser = async (req,res) => {
         console.log('Error in updating user password: ', error);
         res.status(500).json({ error: error.message });
     }
+}
+
+// get profile details
+
+export const getProfileDetails = async (req,res) =>{
+try {
+    
+    const userId = req.user.id
+    const user = await User.findOne({where : {id:userId}});
+    
+    if(!user){
+        console.log("Incorrect user id");
+        return res.status(404).json({ message:"Invalid User ID!" }) 
+    }
+
+    return  res.status(200).json(user);
+} catch (error) {
+    console.log(error);
+}
 }

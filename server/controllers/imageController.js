@@ -1,35 +1,19 @@
 // upload image and covert to URL 
 import { uploadToImgBB } from '../services/imageUploadService.js';
 import { contextGenerator } from '../services/contextGeneratorService.js';
-import multer from 'multer';
-
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './uploads')
-    },
-    filename: function (req, file, cb) {
-      cb(null,`${Date.now()} - ${file.originalname}`)
-    }
-  })
-  
-  const upload = multer({ storage: storage }).single('uploadImage');
+import multerConfig from '../utils/multerConfig.js';
 
   const uploadImage = async (req, res) => {
     try {
-      upload(req, res, async function (err) {
-        if (err instanceof multer.MulterError) {
-            // Multer error handling
-            console.log("Multer error:", err);
-            return res.status(500).json({ error: 'Multer error occurred' });
-        } else if (err) {
-            // Other error handling
-            console.log("Other error:", err);
-            return res.status(500).json({ error: err.message });
-        }
+      multerConfig(req, res, async function (err) {
+        if (err) {
+          console.log("Error in multerConfig:", err);
+          return res.status(500).json({ error: 'Multer error occurred' });
+      }
         const apiKey = process.env.IMGBB_API_URL;
 
         // Image to url generate
+        console.log("Going to enter uploadToImgBB");
         const imageURL = await uploadToImgBB(req.file.path,apiKey);
         console.log("Image URL - ",imageURL);
 
