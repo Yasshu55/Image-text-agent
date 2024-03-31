@@ -29,8 +29,17 @@ const Conversation = forwardRef((props, ref) => {
           contextOfImage: contextString
         }),
       });
-
+      if(!response.ok){
+        throw new Error(`HTTP error! status: ${response.status}`)
+      };
+      
       const data = await response.json();
+      console.log(data);
+      if(data.answer.error != null){
+        alert("Some Unknown error occured! Please try again ")
+        return
+      }
+      
       setConversation(prevConversation => [...prevConversation, { question, answer: data.answer.answer }]);
       setQuestion("");
     } catch (error) {
@@ -64,6 +73,7 @@ const Conversation = forwardRef((props, ref) => {
       }
 
       console.log("Successfully  saved the chat!");
+      alert("Successfully  saved the chat!")
     } catch (error) {
       console.log("Errro at saveHandler : ", error);
     }
@@ -119,5 +129,5 @@ const Conversation = forwardRef((props, ref) => {
     </div>
   );
 })
-
+Conversation.displayName = 'Conversation';
 export default Conversation;

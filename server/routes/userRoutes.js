@@ -2,9 +2,8 @@ import express from 'express';
 import { createUser, updateUser, loginUser,getProfileDetails } from '../controllers/userController.js';
 import { saveDetails } from '../controllers/saveController.js';
 import { uploadImage } from '../controllers/imageController.js';
-import { initiateConversation } from '../controllers/conversationController.js';
+import { initiateConversation, getPreviousConversations } from '../controllers/conversationController.js';
 import { authMiddleware } from '../utils/authMiddleware.js';
-import multerConfig from '../utils/multerConfig.js';
 
 const router = express.Router();
 
@@ -26,7 +25,10 @@ router.post('/conversation', initiateConversation);
 // save conversation
 router.post('/save',authMiddleware,saveDetails)
 
-// get all the previous conversation  of a particular user
+// get the logged in user's userName
 router.post(`/profile`, authMiddleware,getProfileDetails)
+
+// get all the previous conversation  of a particular user
+router.post('/getPreviousConversations',authMiddleware,getPreviousConversations)
 
 export default router;

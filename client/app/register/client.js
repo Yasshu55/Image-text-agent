@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation';
+import '@/styles/globals.css';
 
 const Register = () => {
     const router = useRouter();
@@ -45,7 +46,7 @@ const Register = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
             <div className="bg-white shadow-md rounded-md p-8">
-                <h2 className="text-3xl font-semibold text-center mb-6">Sign Up</h2>
+                <h2 className="text-3xl font-semibold text-center mb-6 text-black">Sign Up</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <input
@@ -78,7 +79,7 @@ const Register = () => {
                         <input
                             type="password"
                             name="confirmPassword"
-                            placeholder="Re-type assword"
+                            placeholder="Re-type Password"
                             className="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:border-indigo-500"
                             onChange={handleChange}
                         />

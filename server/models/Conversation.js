@@ -17,7 +17,7 @@ export const Conversation = sequelize.define('conversation', {
         allowNull:false,
     },
     contextOfImage:{
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
     },  
     userId :{

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import '@/styles/globals.css';
 
 function Login() {
     const router = useRouter()
@@ -41,7 +42,7 @@ function Login() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-400 to-blue-500">
             <div className="bg-white shadow-md rounded-md p-8">
-                <h2 className="text-3xl font-semibold text-center mb-6">Login</h2>
+                <h2 className="text-3xl font-semibold text-center mb-6 text-black">Login</h2>
                 <form onSubmit={submitHandler}>
                     <div className="mb-4">
                         <input

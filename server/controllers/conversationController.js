@@ -1,3 +1,4 @@
+import { Conversation } from '../models/Conversation.js';
 import { query } from '../services/bertQueryService.js';
 
 const initiateConversation = async (req, res) => {
@@ -18,5 +19,23 @@ const initiateConversation = async (req, res) => {
     }
 }
 
+const getPreviousConversations = async (req,res) =>{
+    try {
+        const userId = req.user.id;
+        console.log("This is the userid : ",userId);
 
-export { initiateConversation };
+        const userConvos = await Conversation.findAll({where : {userId:userId}})
+        // console.log("This is the userConvos : ",userConvos);
+
+        if(!userConvos){
+            return res.status(200).json({message : "No previous Convos"})
+        }
+
+        return  res.status(200).json(userConvos)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+export { initiateConversation, getPreviousConversations };
