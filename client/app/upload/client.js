@@ -34,7 +34,7 @@ export default function Upload() {
       imageData.append("uploadImage", file);
 
       try {
-        const response = await fetch('http://localhost:8000/api/upload', {
+        const response = await fetch('https://pixelspeak.onrender.com/api/upload', {
           method: 'POST',
           body: imageData
         });

@@ -25,7 +25,7 @@ function MyProfile() {
     const getProfileInfo = async () =>{
         try {
             console.log("Entered");
-            const res = await fetch(`http://localhost:8000/api/profile`,{
+            const res = await fetch(`https://pixelspeak.onrender.com/api/profile`,{
                 method : "POST",
                 headers: {
                 'Authorization': `Bearer  ${localStorage.getItem('auth-token')}`,
@@ -46,7 +46,7 @@ function MyProfile() {
     const getPrevConvoInfo = async () =>{
         try {
             console.log("Entered getPrevConvoInfo");
-            const res = await fetch(`http://localhost:8000/api/getPreviousConversations`,{
+            const res = await fetch(`https://pixelspeak.onrender.com/api/getPreviousConversations`,{
                 'method' : 'POST',
                 headers:{
                     'Authorization': `Bearer  ${localStorage.getItem('auth-token')}`,

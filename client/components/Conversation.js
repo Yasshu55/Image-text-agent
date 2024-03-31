@@ -19,7 +19,7 @@ const Conversation = forwardRef((props, ref) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/conversation", {
+      const response = await fetch("https://pixelspeak.onrender.com/api/conversation", {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -56,7 +56,7 @@ const Conversation = forwardRef((props, ref) => {
       console.log('conversation',JSON.stringify(conversation));
       console.log('contextOfImage',contextString);
 
-      const res = await fetch(`http://localhost:8000/api/save`,{
+      const res = await fetch(`https://pixelspeak.onrender.com/api/save`,{
         method : "POST",
         headers: {
           'Authorization': `Bearer  ${localStorage.getItem('auth-token')}`,

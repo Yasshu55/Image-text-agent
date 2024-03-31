@@ -18,7 +18,7 @@ function Login() {
     const submitHandler = async (e) =>{
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:8000/api/login',{
+            const res = await fetch('https://pixelspeak.onrender.com/api/login',{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json'
