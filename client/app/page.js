@@ -14,11 +14,9 @@ return (
     <header>
       <NavBar />
     </header>
-
     <main >
         <LandingPage />
     </main>
-
     {/* <footer className="bg-white border-t border-gray-200 dark:border-gray-600">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-center items-center flex-wrap">
         <p className="text-gray-400 text-sm mr-4">&copy; 2024 Yashwanth Sai Ch</p>
