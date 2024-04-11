@@ -1,7 +1,7 @@
 import {DataTypes} from 'sequelize';
 import sequelize from '../config/sequelize.js';
 import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 

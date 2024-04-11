@@ -1,6 +1,7 @@
 import {User} from '../models/User.js';
 import {generateToken} from '../utils/generateToken.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
+import redisClient from '../config/redisConifg.js'
 
 // create user 
 
@@ -23,6 +24,14 @@ export const createUser = async (req, res) => {
         // generate and send token
         const token = generateToken(newUser);
 
+        // store token in redis
+        try {
+            await redisClient.set(`user:${newUser.id}`,JSON.stringify(token),'EX',10800);  
+            console.log("Stored in redis");
+        } catch (error) {
+            console.log("error at createUser func : ",error);    
+        }
+
         return res.status(201).json({ message: "User registered successfully", token });
     } catch (error) {
         console.log('Error in Saving the user: ', error);
@@ -43,13 +52,37 @@ export const loginUser = async (req,res) =>{
             console.log("Does not exist user");
             return res.status(400).json({message: "User does not exist!"})
         }
+        
         const isMatch = await user.comparePassword(password)
-
+        
         if(!isMatch){
             return  res.status(400).json({message: "Invalid credentials"})
         }
-        const token = await generateToken(user)
-        return res.status(200).json({token:token})
+        
+        redisClient.get(`user:${user.id}`, async (err,cachedData) =>{ 
+            try {
+                if(cachedData){
+                    console.log("entered redisClient");
+                    const userData = JSON.parse(cachedData)
+                    console.log(userData);
+                    return res.status(200).json({token:userData})
+                }
+                const token = await generateToken(user)
+        
+                // store token in redis
+                try {
+                    await redisClient.set(`user:${user.id}`, JSON.stringify(token), 'EX', 10800);
+                    console.log("Stored in redis");
+                } catch (error) {
+                    console.log("Error storing data in Redis:", error);
+                }
+                console.log("Stored in redis");
+                return res.status(200).json({token:token})
+            } catch (error) {
+                console.log(error);
+            }
+        })
+        
     } catch (error) {
         console.log('Error in Saving the user: ', error);
         res.status(500).json({ error: error.message });

@@ -7,7 +7,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   protocol: 'postgres',
   dialectOptions: {
     ssl: {
-      rejectUnauthorized: false, // This line is added to bypass the self-signed certificate issue
+      rejectUnauthorized: false,
     },
     native: true
   }
