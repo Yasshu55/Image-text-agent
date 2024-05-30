@@ -1,7 +1,9 @@
 # PixelSpeak
-
+    PixelSpeak lets you converse with your images and generate quick summaries with a single click
 ## Features
-
+  - Generate quick summary of the image
+  - User-bot interaction
+  - Save conversations and image contexts to user profile
 
 <div align="center">
   <h1 align="center">Demo Video</h1>
